@@ -81,11 +81,11 @@ Chạy Collection Runner theo thứ tự TC01-TC12.
 
 ## 7. Minh chứng Swagger
 
-![Swagger UI](docs/swagger.png)
+![Swagger UI](docs/Swagger.png)
 
 ## 8. Minh chứng Postman
 
-![Postman Runner](docs/postman_runner.png)
+![Postman Runner](docs/Postman.png)
 
 ## 9. GitHub
 
