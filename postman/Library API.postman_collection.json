@@ -1,0 +1,424 @@
+{
+  "info": {
+    "_postman_id": "99f6e48c-7c67-403e-9255-40f6e2b840ba",
+    "name": "Library API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "59095266",
+    "_collection_link": "https://go.postman.co/collection/59095266-99f6e48c-7c67-403e-9255-40f6e2b840ba?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "TC01 - Health Check",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"TC01 - Status code is 200\", () => {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Response body is valid JSON\", () => {",
+              "    pm.response.to.be.json;",
+              "});",
+              "",
+              "pm.test(\"Response body contains status 'ok'\", () => {",
+              "    const jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.have.property(\"status\");",
+              "    pm.expect(jsonData.status).to.eql(\"ok\");",
+              "});",
+              "",
+              "pm.test(\"Content-Type is application/json\", () => {",
+              "    pm.response.to.have.header(\"Content-Type\", \"application/json\");",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/health",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "health"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "TC02 - Get All Books",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"TC02 - Status code is 200\", () => {\n    pm.response.to.have.status(200);\n});\n\npm.test(\"Response body is valid JSON\", () => {\n    pm.response.to.be.json;\n});\n\npm.test(\"Response body is an array of books\", () => {\n    const books = pm.response.json();\n    pm.expect(books).to.be.an(\"array\");\n    pm.expect(books.length).to.be.greaterThan(0);\n});\n\npm.test(\"Each book has required fields\", () => {\n    const books = pm.response.json();\n    books.forEach((book) => {\n        pm.expect(book).to.have.property(\"id\");\n        pm.expect(book).to.have.property(\"isbn\");\n        pm.expect(book).to.have.property(\"title\");\n        pm.expect(book).to.have.property(\"author\");\n        pm.expect(book).to.have.property(\"year\");\n        pm.expect(book).to.have.property(\"quantity\");\n    });\n});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/books",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "books"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "TC03 - Search Books",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"TC03 - Status code is 200\", () => {\n    pm.response.to.have.status(200);\n});\n\npm.test(\"Response body is valid JSON\", () => {\n    pm.response.to.be.json;\n});\n\npm.test(\"Response body is an array of books\", () => {\n    const books = pm.response.json();\n    pm.expect(books).to.be.an(\"array\");\n});\n\npm.test(\"Each book has required fields\", () => {\n    const books = pm.response.json();\n    books.forEach((book) => {\n        pm.expect(book).to.have.property(\"id\");\n        pm.expect(book).to.have.property(\"isbn\");\n        pm.expect(book).to.have.property(\"title\");\n        pm.expect(book).to.have.property(\"author\");\n        pm.expect(book).to.have.property(\"year\");\n        pm.expect(book).to.have.property(\"quantity\");\n    });\n});\n\npm.test(\"Results respect the limit parameter\", () => {\n    const books = pm.response.json();\n    pm.expect(books.length).to.be.at.most(1);\n});\n\npm.test(\"Results match the author search query\", () => {\n    const books = pm.response.json();\n    books.forEach((book) => {\n        pm.expect(book.author.toLowerCase()).to.include(\"hùng\");\n    });\n});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/books?author=hùng&limit=1",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "books"
+          ],
+          "query": [
+            {
+              "key": "author",
+              "value": "hùng"
+            },
+            {
+              "key": "limit",
+              "value": "1"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "TC04 - Get Book By ID",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"TC04 - Status code is 200\", () => {\n    pm.response.to.have.status(200);\n});\n\npm.test(\"Response body is valid JSON\", () => {\n    pm.response.to.be.json;\n});\n\npm.test(\"Response body is a single book object\", () => {\n    const book = pm.response.json();\n    pm.expect(book).to.be.an(\"object\");\n    pm.expect(book).to.not.be.an(\"array\");\n});\n\npm.test(\"Book has required fields\", () => {\n    const book = pm.response.json();\n    pm.expect(book).to.have.property(\"id\");\n    pm.expect(book).to.have.property(\"isbn\");\n    pm.expect(book).to.have.property(\"title\");\n    pm.expect(book).to.have.property(\"author\");\n    pm.expect(book).to.have.property(\"year\");\n    pm.expect(book).to.have.property(\"quantity\");\n});\n\npm.test(\"Book ID matches requested ID\", () => {\n    const book = pm.response.json();\n    pm.expect(book.id).to.eql(1);\n});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/books/1",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "books",
+            "1"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "TC05 - Book Not Found",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"TC05 - Status code is 404\", () => {\n    pm.response.to.have.status(404);\n});\n\npm.test(\"Response body is valid JSON\", () => {\n    pm.response.to.be.json;\n});\n\npm.test(\"Response body contains error detail\", () => {\n    const jsonData = pm.response.json();\n    pm.expect(jsonData).to.have.property(\"detail\");\n    pm.expect(jsonData.detail).to.be.a(\"string\");\n    pm.expect(jsonData.detail).to.not.be.empty;\n});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/books/999",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "books",
+            "999"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "TC06 - Create Book",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"TC06 - Status code is 201\", () => {\n    pm.response.to.have.status(201);\n});\n\npm.test(\"Response body is valid JSON\", () => {\n    pm.response.to.be.json;\n});\n\npm.test(\"Created book has required fields\", () => {\n    const book = pm.response.json();\n    pm.expect(book).to.have.property(\"id\");\n    pm.expect(book).to.have.property(\"isbn\");\n    pm.expect(book).to.have.property(\"title\");\n    pm.expect(book).to.have.property(\"author\");\n    pm.expect(book).to.have.property(\"year\");\n    pm.expect(book).to.have.property(\"quantity\");\n});\n\npm.test(\"Created book matches request data\", () => {\n    const book = pm.response.json();\n    pm.expect(book.isbn).to.eql(\"9786040000042\");\n    pm.expect(book.title).to.eql(\"Phát triển Web API với FastAPI\");\n    pm.expect(book.author).to.eql(\"Lê Minh Tuấn\");\n    pm.expect(book.year).to.eql(2024);\n    pm.expect(book.quantity).to.eql(4);\n});\n\npm.test(\"Created book has an assigned ID\", () => {\n    const book = pm.response.json();\n    pm.expect(book.id).to.be.a(\"number\");\n    pm.expect(book.id).to.be.greaterThan(0);\n});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"isbn\": \"9786040000042\",\r\n    \"title\": \"Phát triển Web API với FastAPI\",\r\n    \"author\": \"Lê Minh Tuấn\",\r\n    \"year\": 2024,\r\n    \"quantity\": 4\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/books",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "books"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "TC07 - Duplicate ISBN",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"TC07 - Status code is 409\", () => {\n    pm.response.to.have.status(409);\n});\n\npm.test(\"Response body is valid JSON\", () => {\n    pm.response.to.be.json;\n});\n\npm.test(\"Response body contains error detail\", () => {\n    const jsonData = pm.response.json();\n    pm.expect(jsonData).to.have.property(\"detail\");\n    pm.expect(jsonData.detail).to.be.a(\"string\");\n    pm.expect(jsonData.detail).to.not.be.empty;\n});\n\npm.test(\"Error message mentions the duplicate ISBN\", () => {\n    const jsonData = pm.response.json();\n    pm.expect(jsonData.detail).to.include(\"9786040000042\");\n});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"isbn\": \"9786040000042\",\r\n    \"title\": \"Phát triển Web API với FastAPI\",\r\n    \"author\": \"Lê Minh Tuấn\",\r\n    \"year\": 2024,\r\n    \"quantity\": 4\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/books",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "books"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "TC08 - Invalid Book Data",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"TC08 - Status code is 422\", () => {\n    pm.response.to.have.status(422);\n});\n\npm.test(\"Response body is valid JSON\", () => {\n    pm.response.to.be.json;\n});\n\npm.test(\"Response body contains validation errors array\", () => {\n    const jsonData = pm.response.json();\n    pm.expect(jsonData).to.have.property(\"detail\");\n    pm.expect(jsonData.detail).to.be.an(\"array\");\n    pm.expect(jsonData.detail.length).to.be.greaterThan(0);\n});\n\npm.test(\"Each validation error has required fields\", () => {\n    const errors = pm.response.json().detail;\n    errors.forEach((error) => {\n        pm.expect(error).to.have.property(\"type\");\n        pm.expect(error).to.have.property(\"loc\");\n        pm.expect(error).to.have.property(\"msg\");\n    });\n});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"isbn\": \"123\",\r\n    \"title\": \"Sach kiem thu\",\r\n    \"author\": \"Nguyen Van A\",\r\n    \"year\": 1800,\r\n    \"quantity\": 5\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/books",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "books"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "TC09 - Update Book",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"TC09 - Status code is 200\", () => {\n    pm.response.to.have.status(200);\n});\n\npm.test(\"Response body is valid JSON\", () => {\n    pm.response.to.be.json;\n});\n\npm.test(\"Updated book has required fields\", () => {\n    const book = pm.response.json();\n    pm.expect(book).to.have.property(\"id\");\n    pm.expect(book).to.have.property(\"isbn\");\n    pm.expect(book).to.have.property(\"title\");\n    pm.expect(book).to.have.property(\"author\");\n    pm.expect(book).to.have.property(\"year\");\n    pm.expect(book).to.have.property(\"quantity\");\n});\n\npm.test(\"Updated book reflects new values\", () => {\n    const book = pm.response.json();\n    pm.expect(book.isbn).to.eql(\"9786040000043\");\n    pm.expect(book.title).to.eql(\"Lập trình FastAPI nâng cao\");\n    pm.expect(book.author).to.eql(\"Lê Minh Tuấn\");\n    pm.expect(book.year).to.eql(2025);\n    pm.expect(book.quantity).to.eql(8);\n});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"isbn\": \"9786040000043\",\r\n    \"title\": \"Lập trình FastAPI nâng cao\",\r\n    \"author\": \"Lê Minh Tuấn\",\r\n    \"year\": 2025,\r\n    \"quantity\": 8\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/books/1",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "books",
+            "1"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "TC10 - Patch Book",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"TC10 - Status code is 200\", () => {\n    pm.response.to.have.status(200);\n});\n\npm.test(\"Response body is valid JSON\", () => {\n    pm.response.to.be.json;\n});\n\npm.test(\"Patched book has required fields\", () => {\n    const book = pm.response.json();\n    pm.expect(book).to.have.property(\"id\");\n    pm.expect(book).to.have.property(\"isbn\");\n    pm.expect(book).to.have.property(\"title\");\n    pm.expect(book).to.have.property(\"author\");\n    pm.expect(book).to.have.property(\"year\");\n    pm.expect(book).to.have.property(\"quantity\");\n});\n\npm.test(\"Quantity was patched to new value\", () => {\n    const book = pm.response.json();\n    pm.expect(book.quantity).to.eql(10);\n});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "PATCH",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"quantity\": 10\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/books/1",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "books",
+            "1"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "TC11 - Delete Book",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"TC11 - Status code is 204\", () => {\n    pm.response.to.have.status(204);\n});\n\npm.test(\"Response body is empty\", () => {\n    pm.expect(pm.response.text()).to.be.empty;\n});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/books/1",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "books",
+            "1"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "TC12 - Verify Deleted Book",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"TC12 - Status code is 404\", () => {\n    pm.response.to.have.status(404);\n});\n\npm.test(\"Response body is valid JSON\", () => {\n    pm.response.to.be.json;\n});\n\npm.test(\"Response body confirms book no longer exists\", () => {\n    const jsonData = pm.response.json();\n    pm.expect(jsonData).to.have.property(\"detail\");\n    pm.expect(jsonData.detail).to.be.a(\"string\");\n    pm.expect(jsonData.detail).to.not.be.empty;\n});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/books/1",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "books",
+            "1"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}
